@@ -1,0 +1,115 @@
+from datetime import date, datetime
+from typing import Any
+
+from pydantic import BaseModel, Field
+
+
+class StateRead(BaseModel):
+    id: int
+    name: str
+    code: str
+    centroid_lat: float
+    centroid_lon: float
+
+    model_config = {"from_attributes": True}
+
+
+class DistrictRead(BaseModel):
+    id: int
+    state_id: int
+    state_name: str | None = None
+    name: str
+    code: str
+    population: int
+    area_sq_km: float
+    centroid_lat: float
+    centroid_lon: float
+    boundary_geojson: dict[str, Any] | None = None
+
+    model_config = {"from_attributes": True}
+
+
+class ClimateObservation(BaseModel):
+    observed_on: date
+    rainfall_mm: float
+    rainfall_deficit_pct: float
+    temperature_c: float
+    humidity_pct: float
+    river_level_m: float
+    soil_moisture_pct: float
+    aqi: int
+    ndvi: float | None = None
+    reservoir_level_pct: float | None = None
+
+
+class RiskScoreRead(BaseModel):
+    district_id: int
+    district_name: str
+    state_name: str
+    valid_on: date
+    flood_risk: float
+    drought_risk: float
+    heatwave_risk: float
+    water_stress_risk: float
+    composite_risk: float
+    trend: str
+    drivers: dict[str, Any]
+
+
+class PredictionRequest(BaseModel):
+    district_id: int
+    rainfall_mm: float | None = None
+    river_level_m: float | None = None
+    soil_moisture_pct: float | None = None
+    reservoir_capacity_pct: float | None = None
+    rainfall_deficit_pct: float | None = None
+    temperature_c: float | None = None
+    ndvi: float | None = None
+    humidity_pct: float | None = None
+
+
+class PredictionRead(BaseModel):
+    prediction_type: str
+    probability: float
+    risk_zone: str
+    model_name: str
+    model_version: str
+    valid_for: date
+    explanation: str
+    inputs: dict[str, Any]
+
+
+class ScenarioRequest(BaseModel):
+    district_id: int | None = None
+    rainfall_delta_pct: float = Field(default=0, ge=-100, le=100)
+    temperature_delta_c: float = Field(default=0, ge=-10, le=10)
+    reservoir_delta_pct: float = Field(default=0, ge=-100, le=100)
+    planning_horizon_years: int = Field(default=5, ge=1, le=30)
+
+
+class ScenarioResult(BaseModel):
+    scenario: dict[str, Any]
+    results: dict[str, Any]
+
+
+class CopilotRequest(BaseModel):
+    prompt: str = Field(min_length=2, max_length=1000)
+
+
+class CopilotResponse(BaseModel):
+    explanation: str
+    risk_analysis: str
+    recommended_actions: list[str]
+    chart: dict[str, Any]
+    districts: list[dict[str, Any]]
+
+
+class AlertRead(BaseModel):
+    id: int
+    district: str
+    state: str
+    severity: str
+    alert_type: str
+    title: str
+    message: str
+    issued_at: datetime

@@ -1,0 +1,22 @@
+{
+  "isro_bhuvan": {
+    "purpose": "Administrative boundaries, base map context, terrain layers",
+    "adapter": "backend/app/services/data_sources.py::fetch_bhuvan_boundary"
+  },
+  "nrsc_satellite": {
+    "purpose": "NDVI, land surface temperature, water body index, soil moisture raster products",
+    "adapter": "backend/app/services/data_sources.py::fetch_nrsc_satellite"
+  },
+  "imd_weather": {
+    "purpose": "Rainfall, temperature, humidity, warnings, nowcast feeds",
+    "adapter": "backend/app/services/data_sources.py::fetch_imd_weather"
+  },
+  "india_wris": {
+    "purpose": "River gauges, reservoir storage, basin-level hydrology",
+    "adapter": "backend/app/services/data_sources.py::fetch_wris_reservoirs"
+  },
+  "cpcb_aqi": {
+    "purpose": "Air quality index and pollutant station feeds",
+    "adapter": "backend/app/services/data_sources.py::fetch_cpcb_aqi"
+  }
+}
